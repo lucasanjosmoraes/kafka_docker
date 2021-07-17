@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    extends:
+      file: kafka_docker.yaml
+      service: zookeeper
+
+  broker:
+    extends:
+      file: kafka_docker.yaml
+      service: broker
+
+  kafka-tools:
+    extends:
+      file: kafka_docker.yaml
+      service: kafka-tools
+  
+  schema-registry:
+    image: confluentinc/cp-schema-registry:5.4.0
+    hostname: schema-registry
+    network_mode: "host"
+    ports:
+      - 8081:8081
+    depends_on:
+      - zookeeper
+      - broker
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT_HOST://localhost:9092
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+
+  ksql-server:
+    image: confluentinc/cp-ksql-server:5.4.0
+    network_mode: "host"
+    depends_on:
+      - broker
+      - schema-registry
+    environment:
+      KSQL_BOOTSTRAP_SERVERS: localhost:9092
+      KSQL_LISTENERS: http://0.0.0.0:8088
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      KSQL_KSQL_SERVICE_ID: ksql-server
