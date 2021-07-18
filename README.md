@@ -11,10 +11,9 @@ It's based on [Billy Dharmawan's](https://billydharmawan.medium.com) Medium arti
 
 You don't need any extra configuration to run these Docker images, but if you're using a **macOS with M1 chip**, you will need to configure some components:
 
-- On zookeeper service, you will need to link some directories. Replace `xxx` with the name of your home directory or replace the entire path before `:` with the path you want.
-
+- On zookeeper service, you will need to link some directories.
 ```
 volumes:
-    - /Users/xxx/Documents/dev/volumes/zookeeper/log/version-2/:/var/lib/zookeeper/log/version-2
-    - /Users/xxx/Documents/dev/volumes/zookeeper/data/version-2/:/var/lib/zookeeper/data/version-2
+      - ./volumes/zookeeper/log/version-2/:/var/lib/zookeeper/log/version-2
+      - ./volumes/zookeeper/data/version-2/:/var/lib/zookeeper/data/version-2
 ```
