@@ -17,7 +17,7 @@ services:
       service: kafka-tools
   
   schema-registry:
-    image: confluentinc/cp-schema-registry:5.4.0
+    image: confluentinc/cp-schema-registry:6.2.0
     hostname: schema-registry
     network_mode: "host"
     ports:
@@ -32,7 +32,7 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
 
   ksql-server:
-    image: confluentinc/cp-ksql-server:5.4.0
+    image: confluentinc/cp-ksql-server:5.4.4
     network_mode: "host"
     depends_on:
       - broker

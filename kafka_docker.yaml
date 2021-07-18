@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.4.0
+    image: confluentinc/cp-zookeeper:6.2.0
     hostname: zookeeper
     container_name: zookeeper
     ports:
@@ -12,7 +12,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   broker:
-    image: confluentinc/cp-server:5.4.0
+    image: confluentinc/cp-server:6.2.0
     hostname: broker
     container_name: broker
     depends_on:
@@ -48,10 +48,11 @@ services:
       # Must follow the number of replicas of topics if it's less than 3.
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_TELEMETRY_ENABLED: 'false'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
 
   kafka-tools:
-    image: confluentinc/cp-kafka:5.4.0
+    image: confluentinc/cp-kafka:6.2.0
     hostname: kafka
     container_name: kafka
     command: ["tail", "-f", "/dev/null"]
