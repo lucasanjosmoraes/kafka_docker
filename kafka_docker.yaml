@@ -10,25 +10,29 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - ./volumes/zookeeper/log/version-2/:/var/lib/zookeeper/log/version-2
+      - ./volumes/zookeeper/data/version-2/:/var/lib/zookeeper/data/version-2
 
   broker:
-    image: confluentinc/cp-server:6.2.0
+    image: confluentinc/cp-kafka:6.2.0
     hostname: broker
     container_name: broker
     depends_on:
       - zookeeper
     ports:
+      - "29092:29092"
       - "9092:9092"
+      - "9101:9101"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
       # Create topics automatically when an event is triggered, using default settings.
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
-      # Set topics to compact mode.
-      KAFKA_LOG_CLEANER_ENABLE: 'true'
-      KAFKA_CLEANUP_POLICY: compact
-      # Stores topics forever.
-      KAFKA_LOG_RETENTION_HOURS: -1
       # Definition of the protocol used.
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       # Listeners that will be passed to zookeeper to be consumed by the clients.
@@ -40,16 +44,6 @@ services:
       # Can't be greater than the number of brokers.
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
-      # Metrics settings.
-      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
-      # Where the reporter should point at each broker (that's why we serve 2 listeners).
-      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
-      CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
-      # Must follow the number of replicas of topics if it's less than 3.
-      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
-      CONFLUENT_METRICS_ENABLE: 'true'
-      CONFLUENT_TELEMETRY_ENABLED: 'false'
-      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
 
   kafka-tools:
     image: confluentinc/cp-kafka:6.2.0
