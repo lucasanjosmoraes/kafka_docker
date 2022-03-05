@@ -15,46 +15,17 @@ volumes:
       - ./volumes/zookeeper/data/version-2/:/var/lib/zookeeper/data/version-2
 ```
 
-## Errors
-
-It's not possible to use Schema-Registry versions lower than `6.x.x` on **macOS with M1 chip**, due to error:
-```
-qemu: core dumped
-```
-
-These devices can't use `6.x.x` versions either, due to the error below:
-```
-Exception in thread "main" java.lang.ExceptionInInitializerError
-at org.eclipse.jetty.http.MimeTypes.<clinit>(MimeTypes.java:175)
-at org.eclipse.jetty.server.handler.gzip.GzipHandler.<init>(GzipHandler.java:190)
-at io.confluent.rest.ApplicationServer.wrapWithGzipHandler(ApplicationServer.java:468)
-at io.confluent.rest.ApplicationServer.wrapWithGzipHandler(ApplicationServer.java:477)
-at io.confluent.rest.ApplicationServer.finalizeHandlerCollection(ApplicationServer.java:213)
-at io.confluent.rest.ApplicationServer.doStart(ApplicationServer.java:230)
-at org.eclipse.jetty.util.component.AbstractLifeCycle.start(AbstractLifeCycle.java:73)
-at io.confluent.kafka.schemaregistry.rest.SchemaRegistryMain.main(SchemaRegistryMain.java:43)
-
-Caused by: java.nio.charset.IllegalCharsetNameException: l;charset=iso-8859-1
-at java.base/java.nio.charset.Charset.checkName(Charset.java:308)
-at java.base/java.nio.charset.Charset.lookup2(Charset.java:482)
-at java.base/java.nio.charset.Charset.lookup(Charset.java:462)
-at java.base/java.nio.charset.Charset.forName(Charset.java:526)
-at org.eclipse.jetty.http.MimeTypes$Type.<init>(MimeTypes.java:107)
-at org.eclipse.jetty.http.MimeTypes$Type.<clinit>(MimeTypes.java:67)
-```
-
-Therefore, if you're not running these images on these devices, you can uncomment the line below and also serve the Schema-Registry:
-```
-KSQL_BOOTSTRAP_SERVERS: 'broker:29092'
-# KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
-```
-
 ## References
+
+**Errors running `6.x.x` images on macOS with M1 chip**
+- https://github.com/confluentinc/common-docker/issues/117
 
 **Quick Start for Confluent Platform:**
 - https://docs.confluent.io/platform/current/quickstart/ce-docker-quickstart.html
 - https://github.com/confluentinc/cp-all-in-one/blob/6.2.0-post/cp-all-in-one/docker-compose.yml
+
+**Running Kafka without Zookeeper 🚀🚀🚀**
+- https://github.com/confluentinc/cp-all-in-one/blob/7.0.1-post/cp-all-in-one-kraft/docker-compose.yml
 
 **Installing kSQL only:**
 - https://docs.ksqldb.io/en/latest/operate-and-deploy/installation/install-ksqldb-with-docker/
