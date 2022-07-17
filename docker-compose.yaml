@@ -18,8 +18,6 @@ services:
     image: confluentinc/cp-kafka:7.0.1
     hostname: broker
     container_name: broker
-    depends_on:
-      - zookeeper
     ports:
       - "29092:29092"
       - "9092:9092"
@@ -51,9 +49,6 @@ services:
     container_name: schema-registry
     ports:
       - "8081:8081"
-    depends_on:
-      - zookeeper
-      - broker
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
@@ -63,10 +58,6 @@ services:
     image: confluentinc/ksqldb-server:0.24.0
     hostname: ksqldb-server
     container_name: ksqldb-server
-    depends_on:
-      - zookeeper
-      - broker
-      - schema-registry
     ports:
       - "8088:8088"
     environment:
@@ -81,10 +72,5 @@ services:
     image: confluentinc/ksqldb-cli:0.24.0
     container_name: ksqldb-cli
     network_mode: "host"
-    depends_on:
-      - zookeeper
-      - broker
-      - schema-registry
-      - ksqldb-server
     entrypoint: /bin/sh
     tty: true
